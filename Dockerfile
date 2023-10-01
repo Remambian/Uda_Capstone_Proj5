@@ -1,9 +1,9 @@
 FROM nginx
 
-WORKDIR /app
+## Step 1:
+RUN rm /usr/share/nginx/html/index.html
 
-COPY . Project /app/
+## Step 2:
 
-
-RUN /app/Project/index.html
+COPY /appa/Project/index.html /usr/share/nginx/html
 
