@@ -14,10 +14,21 @@ jobs:
       - run:
           name: HTML Linting
           command: sudo npm run lint:html
+  build-upload-image:
+    docker:
+      - image: circleci/node:14 
+    steps:
+      - checkout
+      - setup_remote_docker:
+          version: 20.10.7
+      - run:
+          name: Build Docker Image
+          command: docker build -t remambian/udablueimage:latest .
 
   
 workflows:
   default:
     jobs:
       - linting-html
+      - build-upload-image
      
