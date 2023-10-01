@@ -8,10 +8,10 @@ jobs:
       - checkout
       - run:
           name: Install Dependencies
-          command: npm install -g htmllint
+          command: sudo npm install -g htmllint
       - run:
           name: HTML Linting
-          command: npm run lint:html
+          command: sudo npm run lint:html
 
   
 workflows:
