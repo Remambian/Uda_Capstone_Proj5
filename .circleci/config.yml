@@ -9,9 +9,9 @@ jobs:
       - run:
           name: Install Dependencies
           command: npm install
-      # - run:
-      #     name: HTML Linting
-      #     command: npm run lint:html
+      - run:
+          name: HTML Linting
+          command: npm run lint:html
 
   
 workflows:
