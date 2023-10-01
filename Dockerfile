@@ -5,5 +5,5 @@ RUN rm /usr/share/nginx/html/index.html
 
 ## Step 2:
 
-COPY /app/Project/index.html /usr/share/nginx/html
+COPY /Project/index.html /usr/share/nginx/html
 
