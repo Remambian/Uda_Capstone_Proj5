@@ -24,6 +24,13 @@ jobs:
       - run:
           name: Build Docker Image
           command: sudo docker build -t remambian/udablueimage:latest .
+      - run:
+          name: Log in to Docker Hub
+          command: |
+            docker login -u="$DOCKERHUB_USERNAME" -p="$DOCKERHUB_PASSWORD"
+      - run:
+          name: Push Docker Hub
+          command: docker push remambian/Capstoneblue:latest
 
   
 workflows:
