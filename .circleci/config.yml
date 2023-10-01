@@ -8,7 +8,9 @@ jobs:
       - checkout
       - run:
           name: Install Dependencies
-          command: sudo npm install -g htmllint
+          command: |
+            sudo npm install 
+            sudo npm install -g htmlhint
       - run:
           name: HTML Linting
           command: sudo npm run lint:html
