@@ -5,5 +5,5 @@ WORKDIR /app
 COPY . Project /app/
 
 
-RUN index.html
+RUN /app/Project/index.html
 
