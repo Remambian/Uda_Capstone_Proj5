@@ -1,0 +1,39 @@
+{
+  "kind": "Deployment",
+  "apiVersion": "apps/v1",
+  "metadata": {
+    "name": "capstoneblue",
+    "labels": {
+      "app": "capstoneblue"
+    }
+  },
+  "spec": {
+    "replicas": 1,
+    "selector": {
+      "matchLabels": {
+        "app": "capstoneblue"
+      }
+    },
+    "template": {
+      "metadata": {
+        "labels": {
+          "app": "capstoneblue"
+        }
+      },
+      "spec": {
+        "containers": [
+          {
+            "name": "capstoneblue",
+            "image": "remambian/capstoneblue",
+            "ports": [
+              {
+                "name": "http-server",
+                "containerPort": 80
+              }
+            ]
+          }
+        ]
+      }
+    }
+  }
+}
