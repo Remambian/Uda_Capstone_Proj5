@@ -164,19 +164,19 @@ jobs:
 workflows:
   default:
     jobs:
-      # - linting-html        
-      # - build-upload-image:
-      #     requires:
-      #       - linting-html
-      # - deploy-infrastructure:
-      #     requires:
-      #       - build-upload-image
+      - linting-html        
+      - build-upload-image:
+          requires:
+            - linting-html
+      - deploy-infrastructure:
+          requires:
+            - build-upload-image
       - create-small-cluster:
           cluster-name: capstone-project-cluster
       - create-service: 
           cluster-name: capstone-project-cluster
-          # requires:
-          #   - deploy-infrastructure
+          requires:
+            - deploy-infrastructure
       - create-deployment:
           cluster-name: capstone-project-cluster
           requires:
