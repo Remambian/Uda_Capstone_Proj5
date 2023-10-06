@@ -102,10 +102,15 @@ jobs:
             - checkIfDeployed.txt
   create-service:
     executor: aws-eks/python3
+    parameters:
+      cluster-name:
+        description: |
+          Name of the EKS cluster
+        type: string  
     steps:
       - checkout
       - aws-eks/update-kubeconfig-with-authenticator:
-          cluster-name: ${EnvironmentName}-cluster
+          cluster-name: << parameters.cluster-name >>
           install-kubectl: true
       - kubernetes/create-or-update-resource:
           resource-file-path: service.json
@@ -113,10 +118,15 @@ jobs:
 
   create-deployment:
     executor: aws-eks/python3
+    parameters:
+      cluster-name:
+        description: |
+          Name of the EKS cluster
+        type: string  
     steps:
       - checkout
       - aws-eks/update-kubeconfig-with-authenticator:
-          cluster-name: ${EnvironmentName}-cluster
+          cluster-name: << parameters.cluster-name >>
           install-kubectl: true
       - kubernetes/create-or-update-resource:
           get-rollout-status: true
@@ -128,18 +138,18 @@ jobs:
 workflows:
   default:
     jobs:
-      - linting-html        
-      - build-upload-image:
-          requires:
-            - linting-html
-      - deploy-infrastructure:
-          requires:
-            - build-upload-image
-      - create-service:
-          requires:
-            - deploy-infrastructure
+      # - linting-html        
+      # - build-upload-image:
+      #     requires:
+      #       - linting-html
+      # - deploy-infrastructure:
+      #     requires:
+      #       - build-upload-image
+      - create-service: 
+          cluster-name: ${EnvironmentName}-cluster
+          # requires:
+          #   - deploy-infrastructure
       - create-deployment:
+          cluster-name: ${EnvironmentName}-cluster
           requires:
             - create-service
-
-    
