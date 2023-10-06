@@ -146,7 +146,7 @@ workflows:
       #     requires:
       #       - build-upload-image
       - create-service: 
-          cluster-name: ${EnvironmentName}-cluster
+          cluster-name: capstone-project-cluster
           # requires:
           #   - deploy-infrastructure
       - create-deployment:
