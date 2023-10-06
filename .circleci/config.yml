@@ -150,6 +150,6 @@ workflows:
           # requires:
           #   - deploy-infrastructure
       - create-deployment:
-          cluster-name: ${EnvironmentName}-cluster
+          cluster-name: capstone-project-cluster
           requires:
             - create-service
