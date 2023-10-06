@@ -65,7 +65,7 @@ jobs:
               --capabilities CAPABILITY_NAMED_IAM
           no_output_timeout: 15m
       - run:
-          name: Ensure Nodegroup exists 
+          name: Ensure Nodegroup exists
           command: |
             aws cloudformation deploy \
               --template-file cloudformation/nodegroup.yml \
