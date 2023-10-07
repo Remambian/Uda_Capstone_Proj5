@@ -127,7 +127,7 @@ workflows:
             - create-service
       - aws-eks/update-container-image:
           cluster-name: capstone-project-cluster
-          container-image-updates: "blue=deployment.json:latest"
+          container-image-updates: "capstoneblue=deployment.json:latest"
           record: true
           requires:
             - create-deployment
