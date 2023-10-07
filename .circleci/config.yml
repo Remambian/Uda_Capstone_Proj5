@@ -104,6 +104,7 @@ jobs:
           get-rollout-status: true
           resource-file-path: deployment.json
           resource-name: deployment/capstoneblue
+          
 
 workflows:
   default:
@@ -124,11 +125,11 @@ workflows:
           cluster-name: capstone-project-cluster
           requires:
             - create-service
-      - aws-eks/update-container-image:
-          cluster-name: capstone-project-cluster
-          container-image-updates: "capstoneblue=deployment.json:latest" 
-          record: true
-          requires:
-            - create-deployment
-          resource-name: deployment/capstoneblue
+      # - aws-eks/update-container-image:
+      #     cluster-name: capstone-project-cluster
+      #     container-image-updates: "capstoneblue=deployment.json:latest" 
+      #     record: true
+      #     requires:
+      #       - create-deployment
+      #     resource-name: deployment/capstoneblue
 
