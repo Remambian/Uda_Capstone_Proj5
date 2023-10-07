@@ -86,27 +86,6 @@ jobs:
               --output text >> ~/checkIfDeployed.txt
             cat ~/checkIfDeployed.txt
       - run:
-          name: Extract the IPs of the management instances for Ansible 
-          command: |
-            echo [management] > ~/inventory.txt
-            aws ec2 describe-instances \
-              --region "${AWS_DEFAULT_REGION}" \
-              --query 'Reservations[*].Instances[*].PublicIpAddress' \
-              --filters "Name=tag:Name,Values=${ENVIRONMENT_NAME}-management*" \
-              --output text >> ~/inventory.txt
-            cat ~/inventory.txt
-      - persist_to_workspace:
-          root: ~/
-          paths:
-            - inventory.txt
-            - checkIfDeployed.txt
-  deploy-kube:
-    docker:
-      - image: circleci/node:14
-    steps:
-      - checkout
-      - kubernetes/install
-      - run:
           name: Install the eksctl tool
           command: |
             if which eksctl > /dev/null; then
@@ -123,6 +102,19 @@ jobs:
             fi
             $SUDO mv eksctl_download/eksctl /usr/local/bin/
             rmdir eksctl_download
+          
+  deploy-kube:
+    docker:
+      - image: circleci/node:14
+    steps:
+      - checkout
+      - kubernetes/install
+      - run:
+          name: Install the eksctl tool
+          command: |
+            sudo curl --silent --location -o /usr/local/bin/eksctl "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64"              
+            sudo chmod +x eksctl_download/eksctl            
+            
   create-service:
     executor: aws-eks/python3
     parameters:
@@ -147,13 +139,12 @@ workflows:
       - build-upload-image:
           requires:
             - linting-html
-      # - deploy-infrastructure:
-      #     requires:
-      #       - build-upload-image
-      # - deploy-kube
-      - create-service: 
-          cluster-name: capstone-project-cluster
+      - deploy-infrastructure:
           requires:
-          - build-upload-image
+            - build-upload-image
+      # - create-service: 
+      #     cluster-name: capstone-project-cluster
+      #     requires:
+      #     - build-upload-image
         
             
