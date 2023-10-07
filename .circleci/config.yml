@@ -77,7 +77,7 @@ jobs:
     parameters:
       cluster-name:
         description: |
-          Name of the EKS cluster
+          Name of the EKS cluster 
         type: string  
     steps:
       - checkout
