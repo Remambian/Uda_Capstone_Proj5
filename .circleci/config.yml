@@ -101,19 +101,7 @@ jobs:
               SUDO="sudo"
             fi
             $SUDO mv eksctl_download/eksctl /usr/local/bin/
-            rmdir eksctl_download
-          
-  deploy-kube:
-    docker:
-      - image: circleci/node:14
-    steps:
-      - checkout
-      - kubernetes/install
-      - run:
-          name: Install the eksctl tool
-          command: |
-            sudo curl --silent --location -o /usr/local/bin/eksctl "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64"              
-            sudo chmod +x eksctl_download/eksctl            
+            rmdir eksctl_download         
             
   create-service:
     executor: aws-eks/python3
@@ -139,11 +127,11 @@ workflows:
       - build-upload-image:
           requires:
             - linting-html
-      - deploy-infrastructure:
-          requires:
-            - build-upload-image
-      # - create-service: 
-      #     cluster-name: capstone-project-cluster
+      # - deploy-infrastructure:
+      #     requires:
+      #       - build-upload-image
+      - create-service: 
+          cluster-name: capstone-project-cluster
       #     requires:
       #     - build-upload-image
         
