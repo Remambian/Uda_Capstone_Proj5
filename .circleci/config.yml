@@ -1,8 +1,8 @@
 version: 2.1
 
 orbs:
-  aws-eks: circleci/aws-eks@1.1.0
-  kubernetes: circleci/kubernetes@0.4.0
+  aws-eks: circleci/aws-eks@1.2.0
+  kubernetes: circleci/kubernetes@1.3.1
 
 jobs:
   linting-html:
@@ -37,54 +37,22 @@ jobs:
           command: docker push remambian/capstoneblue:latest
 
   deploy-infrastructure:
-    docker:
-      - image: amazon/aws-cli
+    executor: aws-eks/python3
+    parameters:
+      cluster-name:
+        description: |
+          Name of the EKS cluster
+        type: string
     steps:
       - checkout
-      - run:
-          name: Install dependencies
-          command: yum install -y tar gzip
-      - run:
-          name: Ensure EKS network exists 
-          command: |
-            aws cloudformation deploy \
-              --template-file cloudformation/network.yml \
-              --tags project=${ENVIRONMENT_NAME}-project \
-              --stack-name "${ENVIRONMENT_NAME}-eks-network" \
-              --region ${AWS_DEFAULT_REGION} \
-              --parameter-overrides file://cloudformation/network-parameters.json
-      - run:    
-          name: Ensure EKS Cluster exists
-          command: |
-            aws cloudformation deploy \
-              --template-file cloudformation/cluster.yml \
-              --tags project=${ENVIRONMENT_NAME}-project \
-              --stack-name "${ENVIRONMENT_NAME}-eks-cluster" \
-              --region ${AWS_DEFAULT_REGION} \
-              --parameter-overrides file://cloudformation/cluster-parameters.json \
-              --capabilities CAPABILITY_NAMED_IAM
-          no_output_timeout: 15m
-      - run:
-          name: Ensure Nodegroup exists
-          command: |
-            aws cloudformation deploy \
-              --template-file cloudformation/nodegroup.yml \
-              --tags project=${ENVIRONMENT_NAME}-project \
-              --stack-name "${ENVIRONMENT_NAME}-eks-nodegroup" \
-              --region ${AWS_DEFAULT_REGION} \
-              --parameter-overrides file://cloudformation/nodegroup-parameters.json \
-              --capabilities CAPABILITY_NAMED_IAM
-      - run:
-          name: Ensure management instances exists
-          command: |
-            aws cloudformation deploy \
-              --template-file cloudformation/management.yml \
-              --tags project=${ENVIRONMENT_NAME}-project \
-              --stack-name "${ENVIRONMENT_NAME}-eks-management" \
-              --region ${AWS_DEFAULT_REGION} \
-              --parameter-overrides file://cloudformation/management-parameters.json \
-              --output text >> ~/checkIfDeployed.txt
-            cat ~/checkIfDeployed.txt
+      - aws-eks/install-aws-iam-authenticator:
+          release-tag: ""
+      - aws-eks/create-cluster:
+          cluster-name: << parameters.cluster-name >>
+          node-type: t2.small
+          nodes-max: 2
+          ssh-access: false
+          ssh-public-key: ""
       - run:
           name: Install the eksctl tool
           command: |
@@ -101,24 +69,7 @@ jobs:
               SUDO="sudo"
             fi
             $SUDO mv eksctl_download/eksctl /usr/local/bin/
-            rmdir eksctl_download         
-            
-  create-service:
-    executor: aws-eks/python3
-    parameters:
-      cluster-name:
-        description: |
-          Name of the EKS cluster
-        type: string  
-    steps:
-      - checkout
-      - aws-eks/update-kubeconfig-with-authenticator:
-          cluster-name: << parameters.cluster-name >>
-          install-kubectl: true
-      - kubernetes/create-or-update-resource:
-          resource-file-path: service.json
-          resource-name: service/capstonebluegreenlb
-
+            rmdir eksctl_download
 
 workflows:
   default:
@@ -127,12 +78,7 @@ workflows:
       - build-upload-image:
           requires:
             - linting-html
-      # - deploy-infrastructure:
-      #     requires:
-      #       - build-upload-image
-      - create-service: 
+      - deploy-infrastructure:
           cluster-name: capstone-project-cluster
-      #     requires:
-      #     - build-upload-image
-        
-            
+          requires:
+            - build-upload-image      
