@@ -113,10 +113,10 @@ workflows:
       - build-upload-image:
           requires:
             - linting-html
-      # - deploy-infrastructure:
-      #     cluster-name: capstone-project-cluster
-      #     requires:
-      #       - build-upload-image
+      - deploy-infrastructure:
+          cluster-name: capstone-project-cluster
+          requires:
+            - build-upload-image
       - create-service:
           cluster-name: capstone-project-cluster
           requires:
