@@ -120,7 +120,7 @@ workflows:
       - create-service:
           cluster-name: capstone-project-cluster
           requires:
-            - build-upload-image
+            - deploy-infrastructure
       - create-deployment: 
           cluster-name: capstone-project-cluster
           requires:
